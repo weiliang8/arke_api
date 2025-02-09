@@ -16,7 +16,8 @@ const errorHandler = (err, req, res, next) => {
 
   // MONGOOSE DUPLICATE KEY
   if (err.code === 11000) {
-    const message = "Duplicate field value entered";
+  //  const message = "Duplicate field value entered";
+    const message = err.keyValue.email +" exists in the system"
     error = new ErrorResponse(message, 400);
   }
 

@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-
+//https://www.youtube.com/watch?v=TkYtVQKWxeg
 const sendEmail = async(options) => {
     // CREATE REUSABLE TRANSPORTER OBJECT USING THE DEFAULT SMTP TRANSPORT
     const transporter = nodemailer.createTransport({
