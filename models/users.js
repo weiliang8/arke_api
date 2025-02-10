@@ -20,8 +20,13 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "publisher"],
+    enum: ["user","dev", "admin"],
     default: "user",
+  },
+  subscription: {
+    type: String,
+    enum: ["arke free","arke pro"],
+    default: "arke free",
   },
   password: {
     type: String,
