@@ -25,7 +25,8 @@ connectDB();
 
 //ROUTE FILES
 const auth = require("./routes/auth");
-const users = require("./models/users");
+const users = require("./routes/users");
+const featureAccess = require("./routes/featureAccess");
 
 const app = express();
 
@@ -69,6 +70,7 @@ app.use(cors());
 // //MOUNT ROUTER
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/users", users);
+app.use("/api/v1/featureaccess",featureAccess);
 
 app.use(errorHandler);
 

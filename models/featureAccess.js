@@ -1,14 +1,19 @@
 const mongoose = require('mongoose');
 
 const featureAccessSchema = new mongoose.Schema({
-  roles: [{ type: String, enum: ['guest','user','admin','dev'] }],
+  role: {
+     type: String, 
+     enum: ['guest','user','admin','dev'] ,
+     required: [true, "Please select a role"],
+    },
   features: {
     text:{
       allowed: { type: Boolean, default: true },
       requiresSubscription: {  
         type: String,
         enum: ["none","arke free","arke pro"],
-        default: "none"}   
+        default: "none"
+      }   
      },
     docUpload: {
       allowed: { type: Boolean, default: false },
@@ -24,11 +29,16 @@ const featureAccessSchema = new mongoose.Schema({
           enum: ["none","arke free","arke pro"],
           default: "arke pro"}
       },
-      conversationHistoryDays:{
-        type:Integer,
-        default:[0,30,9999]
+      contextWindow: {
+        type:String,
+        enum:["8K","32K","128K"],
+        default:"32K"
       },
-    tokenLimit: { type: Number, default: 0 }
+      conversationHistoryDays:{
+        type:Number,
+        enum:[0,30,9999],
+        default:30
+      },
   }
 });
 

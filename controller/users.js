@@ -1,73 +1,65 @@
 const User = require("../models/users");
-const encrypt = require("../utils/password");
+const ErrorResponse = require('../utils/errorResponse');
+const asyncHandler = require('../middleware/async');
 
-exports.createUser = async (req, res, next) => {
-    try {
-        console.log(req.body);
-        const { name, email, password } = req.body;
+// @desc      Get all users
+// @route     GET /api/v1/users
+// @access    Private/Admin
+exports.getUsers = asyncHandler(async (req, res, next) => {
+  res.status(200).json(res.advancedResults);
+});
 
-        let hashPassword = encrypt(password);
+// @desc      Get single user
+// @route     GET /api/v1/users/:id
+// @access    Private/Admin
+exports.getUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
 
-        await User.create({
-            name,
-            email,
-            password,
-        });
+  if(!user){
+    return next(new ErrorResponse(`No user with the id of ${req.params.id}`, 404));
+  }
 
-        res.status(200).json({ success: true });
-    } catch (err) {
-        let errmsg = "";
-        if (err.name == "ValidationError") {
-            const errFields = [];
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
 
-            // Loop through the errors and collect the names of required missing fields
-            Object.keys(err.errors).forEach((field) => {
-                if (err.errors[field].kind === "required") {
-                    //Identify type of vaildation error
-                    errFields.push(
-                        field.charAt(0).toUpperCase() + field.slice(1),
-                    ); //Cap first letter of field
-                }
-            });
+// @desc      Create user
+// @route     POST /api/v1/users
+// @access    Private/Admin
+exports.createUser = asyncHandler(async (req, res, next) => {
+  const user = await User.create(req.body);
 
-            // If there are error fields, create the message
-            if (errFields.length > 0) {
-                const lastField = errFields.pop(); // Get the last field
-                errmsg =
-                    errFields.length > 0
-                        ? `${errFields.join(", ")} and ${lastField} are required`
-                        : `${lastField} is required`;
-            }
-        }
-        res.status(400).json({ success: false, error: errmsg });
-    }
-};
+  res.status(201).json({
+    success: true,
+    data: user
+  });
+});
 
-exports.getAllUsers = async (req, res, next) => {
-    data = await User.find();
+// @desc      Update user
+// @route     PUT /api/v1/users/:id
+// @access    Private/Admin
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
 
-    res.status(200).json({
-        success: true,
-        data,
-    });
-};
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});
 
-exports.updateUser = async (req, res, next) => {
-    let user = await User.findByIdAndUpdate(req.params.userid, req.body, {
-        new: true,
-        runValidators: true,
-    });
+// @desc      Delete user
+// @route     DELETE /api/v1/users/:id
+// @access    Private/Admin
+exports.deleteUser = asyncHandler(async (req, res, next) => {
+  await User.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({
-        success: true,
-        data: user,
-    });
-};
-
-exports.deleteUser = async (req, res, next) => {
-    await User.findOneAndDelete({ id: req.params.id }).then(function (val) {
-        res.status(200).json({
-            success: true,
-        });
-    });
-};
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
+});
